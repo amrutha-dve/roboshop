@@ -9,10 +9,10 @@ useradd roboshop
 rm -rf /app
 mkdir /app
 curl -o /tmp/catalogue.zip https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip
-rm -rf /app
 cd /app
 unzip /tmp/catalogue.zip
 
+rm -rf /app
 cd /app
 npm install
 systemctl daemon-reload
