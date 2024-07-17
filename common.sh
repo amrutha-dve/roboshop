@@ -5,9 +5,9 @@ rm -f $LOG_FILE
   #echo &>>LOG_FILE
   #echo "####################  $*  ###############" &>>LOG_FILE
   #echo $*
-$}
+#$}
 NODEJS() {
- echo DisableNodeJS Default Version
+ echo Disable NodeJS Default Version
  dnf module disable nodejs -y >$LOG_FILE
  echo enable NodeJS 20 Module
  dnf module enable nodejs:20 -y >$LOG_FILE
