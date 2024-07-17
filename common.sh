@@ -13,7 +13,7 @@ NODEJS() {
  dnf module enable nodejs:20 -y &>>$LOG_FILE
 
  PRINT Install NodeJS
- dnf install nodejs -y &>>/tmp/roboshop.log
+ dnf install nodejs -y &>>$LOG_FILE
 
  PRINT Copy Service File
  cp ${component}.service /etc/systemd/system/${component}.service &>>$LOG_FILE
@@ -36,8 +36,6 @@ NODEJS() {
 
  PRINT Extract the app content
  unzip /tmp/${component}.zip &>>$LOG_FILE
-
- cd /app
 
  PRINT download NodeJS depedencies
  npm install &>>$LOG_FILE
