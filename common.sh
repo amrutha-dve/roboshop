@@ -31,7 +31,7 @@ NODEJS() {
  mkdir /app &>>$LOG_FILE
 
  PRINT downloading the app info
- curl -o /tmp/${component}.zip https://roboshop-artifacts.s3.amazonaws.com/ca${component}-v3.zip &>>$LOG_FILE
+ curl -o /tmp/${component}.zip https://roboshop-artifacts.s3.amazonaws.com/${component}-v3.zip &>>$LOG_FILE
  cd /app
 
  PRINT Extract the app content
