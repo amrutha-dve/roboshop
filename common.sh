@@ -26,12 +26,12 @@ APP_PREREQ() {
   STAT $?
 
   PRINT download the app content
-  curl -o /tmp/${commponent}.zip https://roboshop-artifacts.s3.amazonaws.com/${component}-v3.zip &>>$LOG_FILE
+  curl -o /tmp/${component}.zip https://roboshop-artifacts.s3.amazonaws.com/${component}-v3.zip &>>$LOG_FILE
   STAT $?
 
   PRINT extract new content
   cd ${app_path}
-  unzip /tmp/frontend.zip &>>$LOG_FILE
+  unzip /tmp/${component}.zip &>>$LOG_FILE
   STAT $?
 }
 NODEJS() {
