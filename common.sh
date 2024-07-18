@@ -37,7 +37,10 @@ NODEJS() {
  STAT $?
 
  PRINT adding Application User
- useradd roboshop &>>$LOG_FILE
+ id roboshp &>>$LOG_FILE
+ if [ $? -ne 0 ]; then
+   useradd roboshop &>>$LOG_FILE
+  fi
  STAT $?
 
  PRINT Cleaning Old Content
