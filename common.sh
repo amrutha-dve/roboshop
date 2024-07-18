@@ -22,8 +22,8 @@ APP_PREREQ() {
   STAT $?
 
   PRINT create new App Directory
-    mkdir ${app_path} &>>$LOG_FILE
-    STAT $?
+  mkdir ${app_path} &>>$LOG_FILE
+  STAT $?
 
   PRINT download the app content
   curl -o /tmp/${commponent}.zip https://roboshop-artifacts.s3.amazonaws.com/${component}-v3.zip &>>$LOG_FILE
@@ -31,7 +31,7 @@ APP_PREREQ() {
 
   PRINT extract new content
   cd ${app_path}
-  unzip /tmp/${component}.zip &>>$LOG_FILE
+  unzip /tmp/frontend.zip &>>$LOG_FILE
   STAT $?
 }
 NODEJS() {
