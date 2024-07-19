@@ -1,4 +1,4 @@
 source common.sh
-component=mysql
+component=mongo
 
 JAVA
