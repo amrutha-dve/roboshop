@@ -1,5 +1,7 @@
 LOG_FILE=/tmp/roboshop.log
 rm -f $LOG_FILE
+code_dir=$(pwd)
+
 PRINT() {
  echo &>>$LOG_FILE
   echo &>>$LOG_FILE
@@ -17,6 +19,12 @@ STAT() {
   fi
 }
 APP_PREREQ() {
+  PRINT adding Application User
+  id roboshop &>>$LOG_FILE
+   if [ $? -ne 0 ]; then
+     useradd roboshop &>>$LOG_FILE
+   fi
+  STAT $?
   PRINT remove old content
   rm -rf ${app_path} &>>$LOG_FILE
   STAT $?
@@ -36,7 +44,7 @@ APP_PREREQ() {
 }
 SYSTEMD_SETUP() {
     PRINT Copy Service File
-    cp ${component}.service /etc/systemd/system/${component}.service &>>$LOG_FILE
+    cp ${code_dir}/${component}.service /etc/systemd/system/${component}.service &>>$LOG_FILE
     STAT $?
 
    PRINT Start Service
@@ -46,28 +54,20 @@ SYSTEMD_SETUP() {
    STAT $?
 }
 JAVA() {
-  cp shipping.service /etc/systemd/system/shipping.service
-  dnf install maven -y
-  useradd roboshop
-  rm -rf /app
-  mkdir /app
-  curl -L -o /tmp/shipping.zip https://roboshop-artifacts.s3.amazonaws.com/shipping-v3.zip
-  cd /app
-  unzip /tmp/shipping.zip
 
-  cd /app
-  mvn clean package
-  mv target/shipping-1.0.jar shipping.jar
+  PRINT maven install and java
+  dnf install maven -y &>>$LOG_FILE
+  STAT $?
 
-  dnf install mysql -y
+  APP_PREREQ
 
-  mysql -h mysql.dev.devopsb72.online -uroot -pRoboShop@1 < /app/db/schema.sql
-  mysql -h mysql.dev.devopsb72.online -uroot -pRoboShop@1 < /app/db/master-data.sql
-  mysql -h mysql.dev.devopsb72.online -uroot -pRoboShop@1 < /app/db/app-user.sql
+PRINT download dependencies
+  mvn clean package &>>$LOG_FILE
+  mv target/shipping-1.0.jar shipping.jar &>>$LOG_FILE
+STAT $?
+ SCHEMA_SETUP
+ SYSTEMD_SETUP
 
-  systemctl daemon-reload
-  systemctl enable shipping
-  systemctl restart shipping
 
 }
 NODEJS() {
@@ -82,21 +82,44 @@ NODEJS() {
  dnf install nodejs -y &>>$LOG_FILE
  STAT $?
 
- PRINT copy MongoDB repo File
- cp mongo.repo /etc/yum.repos.d/mongo.repo &>>$LOG_FILE
- STAT $?
-
- PRINT adding Application User
- id roboshop &>>$LOG_FILE
- if [ $? -ne 0 ]; then
-   useradd roboshop &>>$LOG_FILE
- fi
- STAT $?
-
  APP_PREREQ
 
  PRINT download NodeJS depedencies
  npm install &>>$LOG_FILE
  STAT $?
+ SCHEMA_SETUP
 
+ SYSTEMD_SETUP
+
+}
+SCHEMA_SETUP() {
+  if [ "$schema_setup" == "mongo" ]; then
+  PRINT copy MongoDB repo File
+     cp mongo.repo /etc/yum.repos.d/mongo.repo &>>$LOG_FILE
+     STAT $?
+
+  PRINT install mongo client
+  dnf install mongodb-mongosh -y &>>$LOG_FILE
+  STAT $?
+
+  PRINT load master data
+  mongosh --host mongo.dev.devopsb72.online </app/db/master-data.js &>>$LOG _FILE
+  STAT $?
+fi
+  if [ "$schema_setup" == "mysql" ]; then
+  PRINT install mysql client
+  dnf install mysql -y &>>$LOG_FILE
+  STAT $?
+
+  PRINT load schema
+   mysql -h mysql.dev.devopsb72.online -uroot -pRoboShop@1 < /app/db/schema.sql &>>$LOG_FILE
+   STAT $?
+
+   PRINT load master-data
+    mysql -h mysql.dev.devopsb72.online -uroot -pRoboShop@1 < /app/db/master-data.sql &>>$LOG_FILE
+    STAT $?
+    PRINT create app user
+    mysql -h mysql.dev.devopsb72.online -uroot -pRoboShop@1 < /app/db/app-user.sql &>>$LOG_FILE
+  STAT $?
+fi
 }
