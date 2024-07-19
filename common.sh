@@ -103,7 +103,7 @@ SCHEMA_SETUP() {
   STAT $?
 
   PRINT load master data
-  mongosh --host mongo.dev.devopsb72.online </app/db/master-data.js &>>$LOG _FILE
+  mongosh --host mongo.dev.devopsb72.online </app/db/master-data.js &>>$LOG_FILE
   STAT $?
 fi
   if [ "$schema_setup" == "mysql" ]; then
