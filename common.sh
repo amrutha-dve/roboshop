@@ -68,7 +68,6 @@ STAT $?
  SCHEMA_SETUP
  SYSTEMD_SETUP
 
-
 }
 NODEJS() {
  PRINT Disable NodeJS Default Version
@@ -111,8 +110,8 @@ fi
   dnf install mysql -y &>>$LOG_FILE
   STAT $?
 
-for file in schema master-data app-user; do
-      PRINT Load file - $file.sql
+for files in schema master-data app-user; do
+      PRINT Load files - $file.sql
       mysql -h mysql.dev.rdevopsb80.online -uroot -pRoboShop@1 < /app/db/$file.sql &>>$LOG_FILE
       STAT $?
     done
